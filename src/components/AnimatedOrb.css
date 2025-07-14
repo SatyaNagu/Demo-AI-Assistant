@@ -1,0 +1,42 @@
+.orb-outer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.orb-bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 2;
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.orb-lines-group {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  will-change: transform;
+}
+.orb-line-img {
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+.orb-blur {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 48px;
+  z-index: 2;
+  pointer-events: none;
+}
+.orb-blur-left {
+  left: 0;
+}
+.orb-blur-right {
+  right: 0;
+} 
