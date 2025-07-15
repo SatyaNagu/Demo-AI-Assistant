@@ -78,19 +78,15 @@ def whisper_transcribe_worker(audio_path, model_name, queue):
 def adaptive_transcribe(audio_path):
     for model_name in ["medium", "large"]:
         print(f"🔍 Transcribing with Whisper ({model_name})...")
-        queue = multiprocessing.Queue()
-        p = multiprocessing.Process(target=whisper_transcribe_worker, args=(audio_path, model_name, queue))
-        p.start()
-        while p.is_alive():
-            p.join(timeout=0.2)
-        if not queue.empty():
-            text = queue.get()
-            if len(text.split()) > 4 and any(c.isalpha() for c in text):
-                punctuated = punctuation_model.restore_punctuation(text)
-                print(f"📝 You said: {punctuated}")
-                return punctuated
-            else:
-                print(f"⚠️ Poor quality with {model_name}, trying next...")
+        model = whisper.load_model(model_name)
+        result = model.transcribe(audio_path)
+        text = result["text"].strip()
+        if len(text.split()) > 4 and any(c.isalpha() for c in text):
+            punctuated = punctuation_model.restore_punctuation(text)
+            print(f"📝 You said: {punctuated}")
+            return punctuated
+        else:
+            print(f"⚠️ Poor quality with {model_name}, trying next...")
     return "Sorry, I couldn't hear you clearly."
 
 def extract_city_from_text(user_text):
@@ -161,9 +157,6 @@ def loop_assistant():
             audio_path = record_audio()
             update_status("thinking")
             user_text = adaptive_transcribe(audio_path)
-            if user_text is None:
-                update_status("idle")
-                continue
             history_data, category = update_search_history(user_text)
             print(f"📊 Detected category: {category}")
             print(f"📈 Updated search stats: {history_data}")
@@ -173,9 +166,6 @@ def loop_assistant():
                 print(f"🌦️ Weather Fetched for {city_name}: {assistant_reply}")
             else:
                 assistant_reply = query_ollama(user_text)
-            if check_abort():
-                update_status("idle")
-                continue
             speak_text(assistant_reply)
             video_links = []
             if category in ["Movies", "Cartoons", "Facts"]:

@@ -3,6 +3,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 let flaskProcess;
+let assistantProcess;
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -17,22 +18,34 @@ function createWindow() {
 }
 
 function startFlask() {
-  // On Windows, use 'python' or 'python3' as appropriate
   flaskProcess = spawn('python', ['flask_server.py'], {
     cwd: path.join(__dirname, '..'),
     stdio: 'ignore',
-    windowsHide: true // Hide the command window on Windows
+    windowsHide: true
+  });
+}
+
+function startAssistant() {
+  assistantProcess = spawn('cmd', ['/c', 'start', 'launch_assistant.bat'], {
+    cwd: path.join(__dirname, '..'),
+    detached: true
   });
 }
 
 app.whenReady().then(() => {
   startFlask();
+  startAssistant();
   createWindow();
 });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
+
   if (flaskProcess) {
     try { process.kill(-flaskProcess.pid); } catch (e) {}
+  }
+
+  if (assistantProcess) {
+    try { process.kill(-assistantProcess.pid); } catch (e) {}
   }
 });
