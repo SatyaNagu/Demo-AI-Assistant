@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import AnimatedOrb from './components/AnimatedOrb';
+import { usePolling } from './hooks/usePolling';
 
 const userAvatar = process.env.PUBLIC_URL + '/Assets/userAvatar.png';
 const videoThumb1 = process.env.PUBLIC_URL + '/Assets/videoThumb1.png';
@@ -12,6 +13,15 @@ const micIcon = process.env.PUBLIC_URL + '/Assets/micIcon.png';
 const playIcon = process.env.PUBLIC_URL + '/Assets/playIcon.png';
 
 export default function Dashboard() {
+  const statusData = usePolling('http://localhost:5000/status', 1000);
+  let statusText = 'Hold RIGHT SHIFT anytime to speak.';
+  if (statusData && statusData.status) {
+    if (statusData.status === 'listening') statusText = 'Listening...';
+    else if (statusData.status === 'thinking') statusText = 'Thinking...';
+    else if (statusData.status === 'speaking') statusText = 'Speaking...';
+    else statusText = 'Hold RIGHT SHIFT anytime to speak.';
+  }
+
   return (
     <div className="dashboard-bg">
       <div className="main-card">
@@ -52,7 +62,7 @@ export default function Dashboard() {
           <section className="center-listen">
             <AnimatedOrb />
             <div className="listen-question">What's the price of hoverboard ....</div>
-            <div className="listen-status" style={{ fontFamily: 'Turret Road, cursive', color: '#FBFBFB', fontSize: '2.2rem', marginTop: '1rem' }}>Listening...</div>
+            <div className="listen-status" style={{ fontFamily: 'Turret Road, cursive', color: '#FBFBFB', fontSize: '2.2rem', marginTop: '1rem' }}>{statusText}</div>
             <div className="listen-mic">
               <img src={micIcon} alt="Mic Icon" className="mic-icon-img" />
             </div>

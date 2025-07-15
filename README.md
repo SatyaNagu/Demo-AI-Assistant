@@ -1,74 +1,133 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
+# Demo AI Assistant
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A cross-platform desktop voice assistant built with React, Electron, and Python (Flask backend + AI modules). The assistant provides real-time voice interaction, AI-powered responses, YouTube suggestions, weather info, search history, and more—all in a beautiful, modern UI.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### Major Features
+- **Voice Assistant:** Hold RIGHT SHIFT to speak, transcribe your voice, and get AI-powered responses.
+- **Real-Time Status:** UI shows assistant state (Idle, Listening, Thinking, Speaking) in real time.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **YouTube Suggestions:** Get relevant YouTube video links for entertainment and information.
+- **Weather Info:** Ask for weather/temperature and get live data.
+- **Search History & Stats:** Tracks and displays your search categories and history.
+- **Modern UI:** Animated orb, sidebar, video suggestions, and status area.
+- **Electron Desktop App:** Runs as a single-window desktop app.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Minor Features
+- **Hotkey Activation:** Hold RIGHT SHIFT to start voice input.
+- **Category Detection:** Classifies your queries into categories (Weather, Movies, Cartoons, etc.).
+- **Speech Synthesis:** AI responses are spoken aloud using TTS.
+- **Abort Logic:** Cancel any AI processing instantly from the UI.
+- **Persistent State:** Remembers last response, status, and video suggestions.
+- **Cross-Origin Support:** Flask backend supports CORS for seamless frontend-backend communication.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## How to Run the Project
 
-### `npm run build`
+### 1. **Install Node.js dependencies**
+```
+npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. **Install Python dependencies**
+Create a `requirements.txt` with the following (or install manually):
+```
+flask
+flask-cors
+whisper
+ollama
+sounddevice
+numpy
+scipy
+torch
+simpleaudio
+pynput
+TTS
+deepmultilingualpunctuation
+youtubesearchpython
+requests
+```
+Then run:
+```
+pip install -r requirements.txt
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. **Start the App**
+- In your project directory, run:
+  ```
+  npm start
+  ```
+  This will:
+  - Start the React development server
+  - Wait for it to be ready
+  - Launch Electron, which also starts the Flask backend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- In a **separate terminal**, run:
+  ```
+  python Main.py
+  ```
+  This enables hotkey/audio and real-time status updates. **You must run Main.py in a real terminal for hotkey/audio to work!**
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Project Structure
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `src/` — React frontend (UI, hooks, components)
+- `public/electron.js` — Electron main process (launches Flask, opens UI)
+- `flask_server.py` — Flask backend (serves API endpoints, status, abort, etc.)
+- `Main.py` — Main assistant logic (audio, AI, TTS, status, abort logic)
+- `weather_fetcher.py`, `youtube_fetcher.py`, `search_history.py` — Backend modules
+- `assistant_state.json`, `search_history.json` — Persistent state files
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Node.js/Electron Packages Used
+- `react`, `react-dom`, `react-scripts` — UI
+- `electron` — Desktop app shell
+- `concurrently`, `wait-on` — For running React and Electron together
+- `@testing-library/*`, `web-vitals` — Testing/metrics
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Python Packages Used
+- `flask`, `flask-cors` — Backend API
+- `whisper` — Speech-to-text
+- `ollama` — AI chat
+- `sounddevice`, `numpy`, `scipy` — Audio recording/processing
+- `torch` — ML backend
+- `simpleaudio` — Audio playback
+- `pynput` — Hotkey detection
+- `TTS` — Text-to-speech
+- `deepmultilingualpunctuation` — Punctuation restoration
+- `youtubesearchpython` — YouTube video search
+- `requests` — HTTP requests
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## Troubleshooting & Tips
+- **Main.py must be run in a real terminal** (not as a background process) for hotkey/audio to work.
+- If you see CORS errors, make sure `flask-cors` is installed and enabled in `flask_server.py`.
+- If Electron does not launch, ensure `concurrently` and `wait-on` are installed (`npm install`).
+- For audio features, ensure your microphone is working and accessible.
+- If you get Python import errors, check that all required packages are installed.
+- For weather, you need a valid OpenWeatherMap API key in `weather_fetcher.py`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Development Workflow
+- Edit React UI in `src/` — hot reloads in Electron window.
+- Edit backend Python files — restart Flask/Main.py as needed.
+- Use the ABORT button to cancel long AI responses.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## Credits
+- Built with [React](https://reactjs.org/), [Electron](https://www.electronjs.org/), [Flask](https://flask.palletsprojects.com/), [Whisper](https://github.com/openai/whisper), [Ollama](https://ollama.com/), and more.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
-# Demo-AI-Assistant
->>>>>>> a7293329acc899feff4f24afd980539d95ac08ab
+**Enjoy your AI-powered desktop assistant!**
