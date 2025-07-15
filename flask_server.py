@@ -2,15 +2,33 @@ from flask import Flask, jsonify, request
 from search_history import load_history
 import json
 import os
+import sys
 
 app = Flask(__name__)
   # At the top of flask_server.py
 from flask_cors import CORS
 CORS(app)
 
-# Temporary memory (shared by assistant logic)
+# Ensure assistant_state.json status is 'idle' on Flask startup
 STATE_FILE = "assistant_state.json"
+def ensure_idle_status():
+    state = {}
+    if os.path.exists(STATE_FILE):
+        with open(STATE_FILE, "r") as f:
+            try:
+                state = json.load(f)
+            except Exception:
+                state = {}
+    if state.get("status") != "idle":
+        state["status"] = "idle"
+        if "last_response" not in state:
+            state["last_response"] = ""
+        if "youtube_links" not in state:
+            state["youtube_links"] = []
+        with open(STATE_FILE, "w") as f:
+            json.dump(state, f, indent=4)
 
+# Temporary memory (shared by assistant logic)
 def load_state():
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r") as f:
@@ -47,4 +65,5 @@ def status():
     return jsonify({"status": state.get("status", "idle")})
 
 if __name__ == '__main__':
+    ensure_idle_status()
     app.run(debug=True)
